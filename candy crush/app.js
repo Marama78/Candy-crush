@@ -35,7 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let colorBeingReplaced
     let squareIdBeingDragged
     let squareIdBeingReplaced
-    let isMoveable = false
+    let squareIdBeingOver
+    let squareIdTempBeingOver
 
     squares.forEach(square=>square.addEventListener('dragstart',dragStart))
     squares.forEach(square=>square.addEventListener('dragend',dragEnd))
@@ -48,24 +49,52 @@ document.addEventListener('DOMContentLoaded', () => {
         colorBeingDragged = this.style.backgroundColor
         squareIdBeingDragged = parseInt(this.id)
         console.log('the color is : colorBeingDragged ',colorBeingDragged)
-        console.log(this.id,'dragstart')
+        console.log(this.id,'>> squareIdBeingDragged')
     }
     
     function dragOver(e){e.preventDefault()
-        //console.log(this.id,'dragover')
+        console.log(this.id,' >> squareIdBeingOver')
     }
     
     function dragEnter(e){e.preventDefault()
-        //console.log(this.id,'dragenter')
+       // console.log(this.id,'dragenter')
     }
     
-    function dragLeave(){console.log(this.id,'dragleave')}
-    
+    function dragLeave(){
+        console.log(this.id,'dragleave')
+    }
+   
+
+    function dragEnd(){
+        console.log(this.id,'dragend')
+    //what is a valid move?
+    }
+
+
     function dragDrop(){
-        console.log(this.id,'dragdrop')
+    let restore = true
+
+       
+
+        console.log(this.id,' >> squareIdBeingReplaced')
         colorBeingReplaced = this.style.backgroundColor
-        squareIdBeingReplaced = parseInt(this.id)
+
+      
         
+        squareIdBeingReplaced = parseInt(this.id)
+
+        let validMoves = [
+            squareIdBeingDragged -1, 
+            squareIdBeingDragged - width,
+            squareIdBeingDragged +1, 
+            squareIdBeingDragged + width]
+        let validMove = validMoves.includes(squareIdBeingReplaced)
+
+        if(validMove){
+        // Let switch the colors
+        squares[squareIdBeingDragged].style.backgroundColor = colorBeingReplaced
+        this.style.backgroundColor = colorBeingDragged
+
         // detects if the movement is correct
         const notValidRight = [6,7,14,15,22,23,30,31,38,39,46,47,54,55,62,63]
         let isNotValidRight = notValidRight.includes(squareIdBeingReplaced)
@@ -88,107 +117,111 @@ document.addEventListener('DOMContentLoaded', () => {
         const notValidFloor = [56,57,58,59,60,61,62,63]
         let isNotValidFloor = notValidFloor.includes(squareIdBeingReplaced)
 
-
+       
        if(!isNotValidRight){
-                if(squares[squareIdBeingReplaced+1].style.backgroundColor == colorBeingDragged
-                    && squares[squareIdBeingReplaced+2].style.backgroundColor == colorBeingDragged){
-                        this.style.backgroundColor = colorBeingDragged
-                        squares[squareIdBeingDragged].style.backgroundColor = colorBeingReplaced
-                    } 
+            if(squares[squareIdBeingReplaced+1].style.backgroundColor == colorBeingDragged
+                && squares[squareIdBeingReplaced+2].style.backgroundColor == colorBeingDragged){
+                    this.style.backgroundColor = colorBeingDragged
+                    squares[squareIdBeingDragged].style.backgroundColor = colorBeingReplaced
+                    restore = false
+            } 
         }
          if(!isNotValidLeft){
             if(squares[squareIdBeingReplaced-1].style.backgroundColor == colorBeingDragged
                 && squares[squareIdBeingReplaced-2].style.backgroundColor == colorBeingDragged){
-                     this.style.backgroundColor = colorBeingDragged
-            squares[squareIdBeingDragged].style.backgroundColor = colorBeingReplaced
-                }
+                this.style.backgroundColor = colorBeingDragged
+                squares[squareIdBeingDragged].style.backgroundColor = colorBeingReplaced
+                restore = false
+            }
         }
-         if(!isNotValidFullRight && !isNotValidFullLeft){
-                if(squares[squareIdBeingReplaced-1].style.backgroundColor == colorBeingDragged
-                    && squares[squareIdBeingReplaced+1].style.backgroundColor == colorBeingDragged){
-                        this.style.backgroundColor = colorBeingDragged
-                        squares[squareIdBeingDragged].style.backgroundColor = colorBeingReplaced
-                }
+        if(!isNotValidFullRight){
+            if(squares[squareIdBeingReplaced-1].style.backgroundColor == colorBeingDragged
+                && squares[squareIdBeingReplaced+1].style.backgroundColor == colorBeingDragged){
+                this.style.backgroundColor = colorBeingDragged
+                squares[squareIdBeingDragged].style.backgroundColor = colorBeingReplaced
+                restore = false
+            }
         }
-         if(!isNotValidDown){
-                if(squares[squareIdBeingReplaced+width].style.backgroundColor == colorBeingDragged
-                    && squares[squareIdBeingReplaced+width*2].style.backgroundColor == colorBeingDragged){
-                         this.style.backgroundColor = colorBeingDragged
-                        squares[squareIdBeingDragged].style.backgroundColor = colorBeingReplaced
-                }
+        if(!isNotValidDown){
+            if(squares[squareIdBeingReplaced+width].style.backgroundColor == colorBeingDragged
+                && squares[squareIdBeingReplaced+width*2].style.backgroundColor == colorBeingDragged){
+                this.style.backgroundColor = colorBeingDragged
+                squares[squareIdBeingDragged].style.backgroundColor = colorBeingReplaced
+                restore = false
+            }
         }
          if(!isNotValidUp){
             if(squares[squareIdBeingReplaced-width].style.backgroundColor == colorBeingDragged
                 && squares[squareIdBeingReplaced-width*2].style.backgroundColor == colorBeingDragged){
-                      this.style.backgroundColor = colorBeingDragged
-                squares[squareIdBeingDragged].style.backgroundColor = colorBeingReplaced
+                    this.style.backgroundColor = colorBeingDragged
+                    squares[squareIdBeingDragged].style.backgroundColor = colorBeingReplaced
             }
         }
-         if( !isNotValidTop && !isNotValidFloor){
+        if( !isNotValidTop && !isNotValidFloor){
             if(squares[squareIdBeingReplaced-width].style.backgroundColor == colorBeingDragged
                 && squares[squareIdBeingReplaced+width].style.backgroundColor == colorBeingDragged){
                     this.style.backgroundColor = colorBeingDragged
-                squares[squareIdBeingDragged].style.backgroundColor = colorBeingReplaced
+                    squares[squareIdBeingDragged].style.backgroundColor = colorBeingReplaced
+                    restore = false
             }
         } 
-
-        if(!isNotValidRight){
+            //---------------------------------------------------------------------
+       if(!isNotValidRight){
             if(squares[squareIdBeingDragged+1].style.backgroundColor == colorBeingReplaced
                 && squares[squareIdBeingDragged+2].style.backgroundColor == colorBeingReplaced){
                     this.style.backgroundColor = colorBeingDragged
                     squares[squareIdBeingDragged].style.backgroundColor = colorBeingReplaced
+                    restore = false
                 } 
         }
-        if(!isNotValidLeft){
+         if(!isNotValidLeft){
             if(squares[squareIdBeingDragged-1].style.backgroundColor == colorBeingReplaced
                 && squares[squareIdBeingDragged-2].style.backgroundColor == colorBeingReplaced){
                     this.style.backgroundColor = colorBeingDragged
-            squares[squareIdBeingDragged].style.backgroundColor = colorBeingReplaced
+                    squares[squareIdBeingDragged].style.backgroundColor = colorBeingReplaced
+                    restore = false
                 }
         }
         if(!isNotValidFullRight && !isNotValidFullLeft){
-                if(squares[squareIdBeingDragged-1].style.backgroundColor == colorBeingReplaced
-                    && squares[squareIdBeingDragged+1].style.backgroundColor == colorBeingReplaced){
-                        this.style.backgroundColor = colorBeingDragged
-                        squares[squareIdBeingDragged].style.backgroundColor = colorBeingReplaced
-                }
+            if(squares[squareIdBeingDragged-1].style.backgroundColor == colorBeingReplaced
+                && squares[squareIdBeingDragged+1].style.backgroundColor == colorBeingReplaced){
+                    this.style.backgroundColor = colorBeingDragged
+                    squares[squareIdBeingDragged].style.backgroundColor = colorBeingReplaced
+                    restore = false
+            }
         }
         if(!isNotValidDown){
-                if(squares[squareIdBeingDragged+width].style.backgroundColor == colorBeingReplaced
-                    && squares[squareIdBeingDragged+width*2].style.backgroundColor == colorBeingReplaced){
-                        this.style.backgroundColor = colorBeingDragged
-                        squares[squareIdBeingDragged].style.backgroundColor = colorBeingReplaced
-                }
+            if(squares[squareIdBeingDragged+width].style.backgroundColor == colorBeingReplaced
+                && squares[squareIdBeingDragged+width*2].style.backgroundColor == colorBeingReplaced){
+                    this.style.backgroundColor = colorBeingDragged
+                    squares[squareIdBeingDragged].style.backgroundColor = colorBeingReplaced
+                    restore = false
+            }
         }
-        if(!isNotValidUp){
+         if(!isNotValidUp){
             if(squares[squareIdBeingDragged-width].style.backgroundColor == colorBeingReplaced
                 && squares[squareIdBeingDragged-width*2].style.backgroundColor == colorBeingReplaced){
                     this.style.backgroundColor = colorBeingDragged
-                squares[squareIdBeingDragged].style.backgroundColor = colorBeingReplaced
+                    squares[squareIdBeingDragged].style.backgroundColor = colorBeingReplaced
+                    restore = false
             }
         }
         if( !isNotValidTop && !isNotValidFloor){
             if(squares[squareIdBeingDragged-width].style.backgroundColor == colorBeingReplaced
                 && squares[squareIdBeingDragged+width].style.backgroundColor == colorBeingReplaced){
                     this.style.backgroundColor = colorBeingDragged
-                squares[squareIdBeingDragged].style.backgroundColor = colorBeingReplaced
+                    squares[squareIdBeingDragged].style.backgroundColor = colorBeingReplaced
+                    restore = false
             }
         } 
 
+        if(restore){
+            squares[squareIdBeingDragged].style.backgroundColor = colorBeingDragged
+            this.style.backgroundColor = colorBeingReplaced
+        }
 
-     
     }
-
-    function dragEnd(){
-        console.log(this.id,'dragend')
-    //what is a valid move?
-        let validMoves = [
-            squareIdBeingDragged -1, 
-            squareIdBeingDragged - width,
-            squareIdBeingDragged +1, 
-            squareIdBeingDragged + width]
-        let validMove = validMoves.includes(squareIdBeingReplaced)
-    }
+}
         
     // drop candies once some have been cleared
     function moveDown(){
@@ -273,8 +306,6 @@ document.addEventListener('DOMContentLoaded', () => {
             } 
         }
     }
-
-   
     checkColumnForFive()
  
   
