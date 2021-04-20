@@ -155,6 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 && squares[squareIdBeingReplaced-width*2].style.backgroundColor == colorBeingDragged){
                     this.style.backgroundColor = colorBeingDragged
                     squares[squareIdBeingDragged].style.backgroundColor = colorBeingReplaced
+                    restore = false
             }
         }
         if( !isNotValidTop && !isNotValidFloor){
