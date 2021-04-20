@@ -188,23 +188,9 @@ document.addEventListener('DOMContentLoaded', () => {
             squareIdBeingDragged +1, 
             squareIdBeingDragged + width]
         let validMove = validMoves.includes(squareIdBeingReplaced)
-
-           /* if(squareIdBeingReplaced && validMove){
-                squareIdBeingReplaced =null
-            } else if(squareIdBeingReplaced && !validMove){
-                squares[squareIdBeingReplaced].style.backgroundColor = colorBeingReplaced
-                squares[squareIdBeingDragged].style.backgroundColor = colorBeingDragged
-            } 
-            else{
-                squares[squareIdBeingDragged].style.backgroundColor = colorBeingDragged
-            } */
-        
-
-      
-        
     }
         
-        // drop candies once some have been cleared
+    // drop candies once some have been cleared
     function moveDown(){
         for(i=0;i<56;i++){
             if(squares[i+width].style.backgroundColor === ''){
@@ -220,8 +206,77 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         }
-    
     }
+    /*  -----------------------------
+        Check Row and Columns
+        -----------------------------
+    */
+
+     // check for row 
+     function checkRowForFive(){
+        for(i=0;i<59;i++){
+            let rowOfFive = [i,i+1,i+2,i+3,i+4]
+            let decidedColor = squares[i].style.backgroundColor
+            const isBlank = squares[i].style.backgroundColor ===''
+            const notValid = [   
+                    4,5,6,7,
+                    12,13,4,15,
+                    20,21,22,23,
+                    28,29,30,31,
+                    36,37,38,39,
+                    44,45,46,47,
+                    52,53,54,55]
+
+                if(notValid.includes(i)) continue
+        
+                if(rowOfFive.every(index=>squares[index].style.backgroundColor == decidedColor && !isBlank)){
+                score+=5
+                rowOfFive.forEach(index=>{
+                squares[index].style.backgroundColor = ''
+                
+                const firstRow = [0,1,2,3,4,5,6,7]
+                const isFirstRow = firstRow.includes(i)
+                
+                    if(isFirstRow)
+                    {
+                        let randomColor = Math.floor(Math.random() * candyColors.length)
+                        squares[index].style.backgroundColor = candyColors[randomColor]
+                    }
+                })
+            } 
+        }
+    }
+    checkRowForFive()
+
+    // check for column 
+    function checkColumnForFive(){
+        for(i=0;i<31;i++){
+            let columnForFive = [i,i+width,i+width*2,i+width*3,i+width*4]
+            let decidedColor = squares[i].style.backgroundColor
+            const isBlank = squares[i].style.backgroundColor ===''
+
+            if(columnForFive.every(index=>squares[index].style.backgroundColor == decidedColor && !isBlank)){
+                score+=5
+                columnForFive.forEach(index=>{
+                squares[index].style.backgroundColor = ''
+
+
+                const firstRow = [0,1,2,3,4,5,6,7]
+                const isFirstRow = firstRow.includes(i)
+                
+                    if(isFirstRow)
+                    {
+                        let randomColor = Math.floor(Math.random() * candyColors.length)
+                        squares[index].style.backgroundColor = candyColors[randomColor]
+                    }
+                })
+            } 
+        }
+    }
+
+   
+    checkColumnForFive()
+ 
   
     // check for row 4
     function checkRowForFour(){
@@ -258,6 +313,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     checkRowForFour()
+
     // check for column 4
     function checkColumnForFour(){
         for(i=0;i<39;i++){
@@ -284,7 +340,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     checkColumnForFour()
-    //checking for the matches
+    
+
     // check for row 3
     function checkRowForThree(){
         for(i=0;i<61;i++){
@@ -313,6 +370,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     checkRowForThree()
+
     // check for column 3
     function checkColumnForThree(){
         for(i=0;i<47;i++){
@@ -342,6 +400,8 @@ document.addEventListener('DOMContentLoaded', () => {
    
 
     window.setInterval(function(){
+        checkRowForFive()
+        checkColumnForFive()
         checkRowForFour()
         checkColumnForFour()
         checkRowForThree()
